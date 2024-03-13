@@ -1,4 +1,4 @@
- const data={
+ export const data={
     Yogesh:{
         title:'very hard',
         decription:'no way'
@@ -17,4 +17,18 @@
     }
 
 }
-export default data
+
+export const CORE_CONCEPTS=[{
+    title:'toller',
+    description:'harder then the no one can change the things'
+},
+{
+    title:'bigger',
+    description:'bigger then the burger',
+},
+{
+    title:'slower',
+    description:'slower then the bigger'
+}
+]
+ 
