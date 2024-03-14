@@ -5,23 +5,18 @@ import GameBoard from "./components/GameBoard";
 import Result from "./components/Result";
 import { combination_winners } from "./components/COMBINATION_WINNERS";
 import GameOver from "./components/GameOver";
-// import { ToastContainer, toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 const initialBoardValue = [
   [null, null, null],
   [null, null, null],
   [null, null, null],
 ];
-const PlayerList = [
+const PlayerList = 
   {
-    name: "player 1",
-    symbol: "X",
-  },
-  {
-    name: "player 2",
-    symbol: "O",
-  },
-];
+    X: "player 1",
+    Y:"player 2",
+  }
+
 function deriveActivePlayer(gameTurns) {
   let currentActivePlayer = "X";
   if (gameTurns.length > 0 && gameTurns[0].player === "X") {
@@ -30,7 +25,7 @@ function deriveActivePlayer(gameTurns) {
   return currentActivePlayer;
 }
 
-function checkWinner(gameBoard){
+function checkWinner(gameBoard,playerName){
   let winner
   for (const combination of combination_winners) {
     const  firstSymbol = gameBoard[combination[0].row][combination[0].column];
@@ -41,7 +36,7 @@ function checkWinner(gameBoard){
       firstSymbol === secondSymbol &&
       firstSymbol === thirdSymbol
     ) {
-       winner=firstSymbol
+       winner=playerName[firstSymbol]
     }
   }
   return winner
@@ -56,10 +51,13 @@ function deriveGameBoard(gameTurns){
   return gameBoard
 }
 function App() {
+
   const [turns, setTurns] = useState([]);
+  const [playerName,setPlayerName]=useState(PlayerList)
   const activePlayer = deriveActivePlayer(turns);
   let gameBoard=deriveGameBoard(turns)
-  const  winner=checkWinner(gameBoard)
+  const  winner=checkWinner(gameBoard,playerName)
+  
   let hasOver=turns.length===9 && !winner
   
   const handleSelectActivePlayer = (rowIndex, colIndex) => {
@@ -80,23 +78,25 @@ function App() {
     setTurns([])
   }
 
+  const handleChange=(e)=>{
+    setPlayerName({...playerName,[e.target.name]:e.target.value})
+  }
   
-
   return (
     <>
       <main>
         <div className="main-board">
           <ul className="player-board">
-            {/* <Player name={'palyer1'} symbol={'X'} isActive={activePlayer==='X'}/>
-          <Player name={'player2'} symbol={'O'} isActive={activePlayer==='O'}/> */}
-            {PlayerList.map((player, playerIndex) => (
+            <Player name={playerName.X} symbol={'X'} isActive={activePlayer==='X'} handleChange={handleChange}/>
+            <Player name={playerName.Y} symbol={'Y'} isActive={activePlayer==='O'} handleChange={handleChange}/>
+            {/* {PlayerList.map((player, playerIndex) => (
               <Player
                 key={playerIndex}
                 name={player.name}
                 symbol={player.symbol}
                 isActive={activePlayer === player.symbol}
               />
-            ))}
+            ))} */}
           </ul>
           {(winner||hasOver)&&<GameOver winner={winner} onClickRematch={handleRematch}/>}
           <GameBoard
@@ -105,7 +105,6 @@ function App() {
           />
         </div>
         <Result gameTurns={turns} />
-        
       </main>
     </>
   );
